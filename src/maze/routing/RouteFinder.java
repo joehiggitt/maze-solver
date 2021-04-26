@@ -1,16 +1,18 @@
-package maze.routing
+package maze.routing;
 
 import java.util.Stack;
 
 public class RouteFinder
 {
 	private Maze maze;
-	private Stack<Tile> route = new Stack<Tile>();
+	private Stack<Tile> route;
 	private boolean finished;
 
 	public RouteFinder(Maze newMaze)
 	{
 		maze = newMaze;
+		route = new Stack<>();
+		finished = false;
 	}
 
 	public Maze getMaze()
