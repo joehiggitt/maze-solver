@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.InvalidClassException;
 
+import java.lang.Math;
+
 public class Maze
 {
 	private Tile entrance;
@@ -21,7 +23,7 @@ public class Maze
 		tiles = newTiles;
 	}
 
-	public static Maze fromTxt(String filePath)
+	public static Maze fromTxt(String filePath) throws InvalidMazeException
 	{
 		List<List<String>> lines = new ArrayList<>();
 		String line;
@@ -68,6 +70,8 @@ public class Maze
 				}
 			}
 
+			int entrances = 0;
+			int exits = 0;
 			// Creates tiles ArrayList and initilises maze
 			List<List<Tile>> tileList = new ArrayList<>();
 			for (int i = 0; i < lines.get(0).size(); i++)
@@ -78,10 +82,45 @@ public class Maze
 			{
 				for (int j = 0; j < lines.get(i).size(); j++)
 				{
-					Tile tile = Tile.fromChar(lines.get(i).get(j).charAt(0));
+					char chr = lines.get(i).get(j).charAt(0);
+					Tile tile = Tile.fromChar(chr);
 					tileList.get(j).add(tile);
+					if (chr == 'e')
+					{
+						entrances++;
+					}
+					else if (chr == 'x')
+					{
+						exits++;
+					}
 				}
 			}
+
+			if (entrances == 0)
+			{
+				throw new NoEntranceExcpetion();
+				// System.out.println("An error occured in Maze.fromTxt() [1]");
+				// return null;
+			}
+			else if (entrances > 1)
+			{
+				throw new MultipleEntranceExcpetion();
+				// System.out.println("An error occured in Maze.fromTxt() [2]");
+				// return null;
+			}
+			else if (exits == 0)
+			{
+				throw new NoExitException();
+				// System.out.println("An error occured in Maze.fromTxt() [3]");
+				// return null;
+			}
+			else if (exits > 1)
+			{
+				throw new MultipleExitException();
+				// System.out.println("An error occured in Maze.fromTxt() [4]");
+				// return null;
+			}
+
 			Maze maze = new Maze(tileList);
 
 			for (int i = 0; i < tileList.size(); i++)
@@ -120,7 +159,6 @@ public class Maze
 		}
 	}
 
-	// REQUIRES TESTING
 	public Tile getAdjacentTile(Tile tile, Direction dir)
 	{
 		Coordinate coord = getTileAtLocation(tile);
@@ -129,28 +167,32 @@ public class Maze
 		switch (dir)
 		{
 			case NORTH:
-				if (y < tiles.get(0).size())
+				if (y < tiles.get(0).size() - 1)
 				{
-					return tiles.get(x).get(y);
+					return tiles.get(x).get(y + 1);
 				}
+				System.out.println("Can't go north");
 				return null;
 			case SOUTH:
-				if (y >= 0)
+				if (y > 0)
 				{
-					return tiles.get(x).get(y);
+					return tiles.get(x).get(y - 1);
 				}
+				System.out.println("Can't go south");
 				return null;
 			case EAST:
-				if (x < tiles.size())
+				if (x < tiles.size() - 1)
 				{
-					return tiles.get(x).get(y);
+					return tiles.get(x + 1).get(y);
 				}
+				System.out.println("Can't go east");
 				return null;
 			case WEST:
-				if (x >= 0)
+				if (x > 0)
 				{
-					return tiles.get(x).get(y);
+					return tiles.get(x - 1).get(y);
 				}
+				System.out.println("Can't go west");
 				return null;
 			default:
 				System.out.println("An error occured in Maze.getAdjacentTile()");
@@ -168,7 +210,6 @@ public class Maze
 		return exit;
 	}
 
-	// REQUIRES TESTING
 	public Tile getTileAtLocation(Coordinate coord)
 	{
 		int x = coord.getX();
@@ -183,13 +224,13 @@ public class Maze
 
 	public Coordinate getTileAtLocation(Tile tile)
 	{
-		for (int i = 0; i < tiles.size(); i++)
+		for (int x = 0; x < tiles.size(); x++)
 		{
-			for (int j = 0; j < tiles.get(i).size(); j++)
+			for (int y = 0; y < tiles.get(x).size(); y++)
 			{
-				if (tiles.get(i).get(j) == tile)
+				if (tiles.get(x).get(y) == tile)
 				{
-					return new Coordinate(i, j);
+					return new Coordinate(x, y);
 				}
 			}
 		}
@@ -279,6 +320,27 @@ public class Maze
 			mazeStr += spaces + xNum;
 		}
 		return mazeStr;
+	}
+
+
+	public int calculateHeuristic(Tile tile)
+	{
+		Tile.Type type = tile.getType();
+		if (type == Tile.Type.WALL)
+		{
+			return -1;
+		}
+		if (type == Tile.Type.EXIT)
+		{
+			return 0;
+		}
+		int tileX = getTileAtLocation(tile).getX();
+		int tileY = getTileAtLocation(tile).getY();
+		int exitX = getTileAtLocation(exit).getX();
+		int exitY = getTileAtLocation(exit).getY();
+		int xSquared = (int) Math.pow(exitX - tileX, 2);
+		int ySquared = (int) Math.pow(exitY - tileY, 2);
+		return (int) Math.round(Math.sqrt(xSquared + ySquared));
 	}
 
 

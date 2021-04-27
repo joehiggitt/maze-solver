@@ -18,7 +18,6 @@ public class Tile
 		// }
 	}
 
-	// REQUIRES TESTING
 	protected static Tile fromChar(char symbol)
 	{
 		switch (symbol)
@@ -42,7 +41,6 @@ public class Tile
 		return type;
 	}
 
-	// REQUIRES TESTING
 	public boolean isNavigable()
 	{
 		switch (type)
@@ -61,7 +59,6 @@ public class Tile
 		}
 	}
 
-	// REQUIRES TESTING
 	public String toString()
 	{
 		switch (type)
@@ -81,7 +78,7 @@ public class Tile
 	}
 
 
-	enum Type
+	public enum Type
 	{
 		CORRIDOR,
 		ENTRANCE,
