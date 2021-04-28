@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import java.io.Serializable;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,11 +13,16 @@ import java.io.InvalidClassException;
 
 import java.lang.Math;
 
-public class Maze
+public class Maze implements Serializable
 {
 	private Tile entrance;
 	private Tile exit;
 	private List<List<Tile>> tiles;
+
+	private Maze()
+	{
+		tiles = new ArrayList<>();
+	}
 
 	private Maze(List<List<Tile>> newTiles)
 	{
@@ -171,28 +177,28 @@ public class Maze
 				{
 					return tiles.get(x).get(y + 1);
 				}
-				System.out.println("Can't go north");
+				// System.out.println("Can't go north");
 				return null;
 			case SOUTH:
 				if (y > 0)
 				{
 					return tiles.get(x).get(y - 1);
 				}
-				System.out.println("Can't go south");
+				// System.out.println("Can't go south");
 				return null;
 			case EAST:
 				if (x < tiles.size() - 1)
 				{
 					return tiles.get(x + 1).get(y);
 				}
-				System.out.println("Can't go east");
+				// System.out.println("Can't go east");
 				return null;
 			case WEST:
 				if (x > 0)
 				{
 					return tiles.get(x - 1).get(y);
 				}
-				System.out.println("Can't go west");
+				// System.out.println("Can't go west");
 				return null;
 			default:
 				System.out.println("An error occured in Maze.getAdjacentTile()");
@@ -216,7 +222,7 @@ public class Maze
 		int y = coord.getY();
 		if ((x < tiles.size()) && (x >= 0) && (y < tiles.get(0).size()) && (y >= 0))
 		{
-			return tiles.get(coord.getX()).get(coord.getY());
+			return tiles.get(x).get(y);
 		}
 		System.out.println("Tile not found [1]");
 		return null;
@@ -290,7 +296,8 @@ public class Maze
 				{
 					spaces = " ";
 				}
-				mazeList.set(tiles.get(i).size() - 1 - j, mazeList.get(tiles.get(i).size() - 1 - j) + spaces + tileStr);
+				int pos = tiles.get(i).size() - 1 - j;
+				mazeList.set(pos, mazeList.get(pos) + spaces + tileStr);
 			}
 		}
 		String mazeStr = "";
@@ -338,9 +345,10 @@ public class Maze
 		int tileY = getTileAtLocation(tile).getY();
 		int exitX = getTileAtLocation(exit).getX();
 		int exitY = getTileAtLocation(exit).getY();
-		int xSquared = (int) Math.pow(exitX - tileX, 2);
-		int ySquared = (int) Math.pow(exitY - tileY, 2);
-		return (int) Math.round(Math.sqrt(xSquared + ySquared));
+		return Math.abs(exitX - tileX) + Math.abs(exitY - tileY);
+		// int xSquared = (int) Math.pow(exitX - tileX, 2);
+		// int ySquared = (int) Math.pow(exitY - tileY, 2);
+		// return (int) Math.round(Math.sqrt(xSquared + ySquared));
 	}
 
 

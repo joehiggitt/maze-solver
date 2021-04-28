@@ -1,6 +1,8 @@
 package maze;
 
-public class Tile
+import java.io.Serializable;
+
+public class Tile implements Serializable
 {
 	private Type type;
 	// private float heuristic;

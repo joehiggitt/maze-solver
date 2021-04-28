@@ -1,5 +1,7 @@
 package maze.routing;
 
+import maze.*;
+
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ public class RouteFinder implements Serializable
 	private Maze maze;
 	private Stack<Tile> route;
 	private boolean finished;
-	private List<Tile> visited;
+	private List<Tile> visited; // used to mark deadends
 
 	public RouteFinder(Maze newMaze)
 	{
@@ -27,6 +29,7 @@ public class RouteFinder implements Serializable
 		route = new Stack<>();
 		finished = false;
 		route.push(maze.getEntrance());
+		visited = new ArrayList<>();
 	}
 
 	public Maze getMaze()
@@ -34,16 +37,9 @@ public class RouteFinder implements Serializable
 		return maze;
 	}
 
-	// REQUIRES TESTING
 	public List<Tile> getRoute()
 	{
-		Stack<Tile> temp = route;
-		List<Tile> tileList = ArrayList<>();
-		for (int i = 0; i < route.size(); i++)
-		{
-			tileList.add(temp.pop());
-		}
-		return Collections.reverse(tileList);
+		return new ArrayList<>(route);
 	}
 
 	public boolean isFinished()
@@ -51,7 +47,6 @@ public class RouteFinder implements Serializable
 		return finished;
 	}
 
-	// REQUIRES TESTING
 	public static RouteFinder load(String filePath)
 	{
 		RouteFinder route = null;
@@ -60,7 +55,7 @@ public class RouteFinder implements Serializable
 			ObjectInputStream reader = new ObjectInputStream(new FileInputStream(filePath))
 		)
 		{
-			route = reader.readObject();
+			route = (RouteFinder) reader.readObject();
 			System.out.println(filePath + " read successfully.");
 		}
 		catch (FileNotFoundException e)
@@ -82,7 +77,6 @@ public class RouteFinder implements Serializable
 		}
 	}
 
-	// REQUIRES TESTING
 	public void save(String filePath)
 	{
 		try
@@ -109,18 +103,20 @@ public class RouteFinder implements Serializable
 		finally {}
 	}
 
-	// REQUIRES WORK
+	// REQUIRES TESTING
 	public boolean step() throws NoRouteFoundException
 	{
 		if (route.peek().getType() == Tile.Type.EXIT)
 		{
+			System.out.println("Maze already solved.");
 			return true;
 		}
 
 		Tile currentTile = route.pop();
-		List<Tile> adjacentTiles = ArrayList<>();
+		List<Tile> adjacentTiles = new ArrayList<>();
 		Maze.Direction[] directions = Maze.Direction.values();
-		Tile tile;
+		Tile tile = null;
+
 		for (Maze.Direction direction: directions)
 		{
 			tile = maze.getAdjacentTile(currentTile, direction);
@@ -130,66 +126,148 @@ public class RouteFinder implements Serializable
 			}
 		}
 
+		Tile selectedTile = null;
+		// Checks how many tiles are adjacent
 		if (adjacentTiles.size() == 0)
 		{
+			// If there are no valid adjacent tiles, then an exception is thrown
 			route.push(currentTile);
-			throw new NoRouteFoundException;
+			throw new NoRouteFoundException();
 		}
 		else if (adjacentTiles.size() == 1)
 		{
-			tile = adjacentTiles.get(0);
-			if(tile == route.peek())
+			selectedTile = adjacentTiles.get(0);
+			// If the adjacent tile has already been visited (it's a dead end), then it backtracks
+			if ((route.size() > 1) && (selectedTile == route.peek()))
 			{
-				if (route.size() == 0)
-				{
-					route.push(currentTile);
-					throw new NoRouteFoundException;
-				}
 				visited.add(currentTile);
-				if (selectedTile.getType() == Tile.Type.EXIT)
-				{
-					return true;
-				}
-				return false;
 			}
+			// If the current tile is the entrance, then it moves to the next tile
+			else if (currentTile.getType() == Tile.Type.ENTRANCE)
+			{
+				route.push(currentTile);
+				route.push(selectedTile);
+			}
+			// If the only previous tile is the entrance, then an exception is thrown
 			else
 			{
 				route.push(currentTile);
-				route.push(tile);
-				return false;
+				throw new NoRouteFoundException();
 			}
 		}
 		else
 		{
-			int maxHeuristic = 0;
-			Tile selectedTile = null;
-			for (Tile tile: adjacentTiles)
+			// If there are multiple adjacent tiles, it uses a heuristic to estimate which is closest to exit
+			int minHeuristic = 2147483647; // uses a large dummy value
+			int heuristic = 0;
+			selectedTile = null;
+			for (Tile adjacentTile: adjacentTiles)
 			{
-				if (visited.contains())
+				heuristic = maze.calculateHeuristic(adjacentTile);
+				// If an adjacent tile has been marked as visited, then current tile is also marked as visited
+				if (visited.contains(adjacentTile))
 				{
-					
+					visited.add(currentTile);
 				}
-				heuristic = maze.getHeuristic(tile);
-				if (heuristic > maxHeuristic)
+				else if (!route.contains(adjacentTile) && (heuristic < minHeuristic))
 				{
-					maxHeuristic = heuristic;
-					selectedTile = tile;
+					minHeuristic = heuristic;
+					selectedTile = adjacentTile;
 				}
 			}
 			route.push(currentTile);
-			route.push(selectedTile);
-			if (selectedTile.getType() == Tile.Type.EXIT)
+			if (selectedTile != null)
 			{
-				return true;
+				route.push(selectedTile);
 			}
-			return false;
+			else
+			{
+				throw new NoRouteFoundException();
+			}
 		}
+		if (route.peek().getType() == Tile.Type.EXIT)
+		{
+			finished = true;
+			return true;
+		}
+		return false;
 	}
 
-	// REQUIRES WORK
 	public String toString()
 	{
-		String mazeStr = maze.toString();
-		return a;
+		List<List<Tile>> tiles = maze.getTiles();
+		List<String> mazeList = new ArrayList<>();
+		// Adds row numbers
+		for (int yNum = tiles.get(0).size() - 1; yNum >= 0; yNum--)
+		{
+			if (tiles.get(0).size() > 10)
+			{
+				if (yNum < 10)
+				{
+					mazeList.add(" " + yNum + " ");
+				}
+				else
+				{
+					mazeList.add(yNum + " ");
+				}
+			}
+			else
+			{
+				mazeList.add(yNum + " ");
+			}
+		}
+		// Adds maze objects to mazeList
+		String tileStr = "";
+		String spaces = "";
+		for (int i = 0; i < tiles.size(); i++)
+		{
+			for (int j = tiles.get(i).size() - 1; j >= 0; j--)
+			{
+				if (route.contains(tiles.get(i).get(j)))
+				{
+					tileStr = "*";
+				}
+				else
+				{
+					tileStr = tiles.get(i).get(j).toString();
+				}
+				if (tiles.size() > 10)
+				{
+					spaces = "  ";
+				}
+				else
+				{
+					spaces = " ";
+				}
+				mazeList.set(tiles.get(i).size() - 1 - j, mazeList.get(tiles.get(i).size() - 1 - j) + spaces + tileStr);
+			}
+		}
+		String mazeStr = "";
+		for (int i = 0; i < mazeList.size(); i++)
+		{
+			mazeStr += mazeList.get(i) + "\n";
+		}
+		mazeStr += "\n " + spaces;
+		// Adds collumn numbers
+		for (int xNum = 0; xNum < tiles.size(); xNum++)
+		{
+			if (tiles.size() > 10)
+			{
+				if (xNum < 10)
+				{
+					spaces = "  ";
+				}
+				else
+				{
+					spaces = " ";
+				}
+			}
+			else
+			{
+				spaces = " ";
+			}
+			mazeStr += spaces + xNum;
+		}
+		return mazeStr;
 	}
 }

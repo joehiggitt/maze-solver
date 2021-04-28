@@ -1,4 +1,5 @@
 import maze.*;
+import maze.routing.*;
 
 public class MazeDriver
 {
@@ -12,16 +13,25 @@ public class MazeDriver
 		catch (InvalidMazeException e)
 		{
 			System.out.println("An error occured.");
+			e.printStackTrace();
 		}
-		// Tile tile = maze.getEntrance();
-		// Maze.Coordinate coord = maze.getTileAtLocation(tile);
-		// System.out.println(coord);
-		// System.out.println(maze.getTileAtLocation(maze.getExit()));
-		// System.out.println(maze.getTileAtLocation(maze.getAdjacentTile(tile, Maze.Direction.NORTH)));
-		// System.out.println(maze.getAdjacentTile(tile, Maze.Direction.NORTH));
-		// System.out.println(maze.getTileAtLocation(coord));
-		// System.out.println(maze.getTiles());
-
-		System.out.println(maze.toString());
+		RouteFinder route = RouteFinder.load("/home/csimage/GitRepos/comp16412/comp16412-coursework-2_w81310jh/resources/route1.obj");
+		while (!route.isFinished())
+		// for (int i = 0; i < 5; i++)
+		{
+			try
+			{
+				route.step();
+			}
+			catch (NoRouteFoundException e)
+			{
+				System.out.println("An error occured.");
+				e.printStackTrace();
+				break;
+			}
+			System.out.println(route);
+			System.out.println("\n----------------------------------------\n");
+		}
+		System.out.println(route.getRoute());
 	}
 }
