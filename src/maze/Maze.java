@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.io.Serializable;
+import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,13 +30,118 @@ public class Maze implements Serializable
 		tiles = newTiles;
 	}
 
-	public static Maze fromTxt(String filePath) throws InvalidMazeException
+	private static Maze convert(List<List<String>> lines) throws InvalidMazeException
+	{
+		int size = lines.get(0).size();
+		for (int i = 1; i < lines.size(); i++)
+		{
+			if (lines.get(i).size() != size)
+			{
+				throw new RaggedMazeException();
+			}
+		}
+
+		int entrances = 0;
+		int exits = 0;
+		// Creates tiles ArrayList and initilises maze
+		List<List<Tile>> tileList = new ArrayList<>();
+		for (int i = 0; i < lines.get(0).size(); i++)
+		{
+			tileList.add(new ArrayList<>());
+		}
+		for (int i = lines.size() - 1; i >= 0; i--)
+		{
+			for (int j = 0; j < lines.get(i).size(); j++)
+			{
+				char chr = lines.get(i).get(j).charAt(0);
+				Tile tile = Tile.fromChar(chr);
+				tileList.get(j).add(tile);
+				if (chr == 'e')
+				{
+					entrances++;
+				}
+				else if (chr == 'x')
+				{
+					exits++;
+				}
+			}
+		}
+
+		if (entrances == 0)
+		{
+			throw new NoEntranceExcpetion();
+		}
+		else if (entrances > 1)
+		{
+			throw new MultipleEntranceExcpetion();
+		}
+		else if (exits == 0)
+		{
+			throw new NoExitException();
+		}
+		else if (exits > 1)
+		{
+			throw new MultipleExitException();
+		}
+
+		Maze maze = new Maze(tileList);
+
+		for (int i = 0; i < tileList.size(); i++)
+		{
+			for (int j = tileList.get(i).size() - 1; j >= 0; j--)
+			{
+				Tile tile = tileList.get(i).get(j);
+				if (tile.getType() == Tile.Type.ENTRANCE)
+				{
+					maze.setEntrance(tile);
+					break;
+				}
+			}
+			if (maze.getEntrance() != null)
+			{
+				break;
+			}
+		}
+		for (int i = tileList.size() - 1; i >= 0; i--)
+		{
+			for (int j = 0; j < tileList.get(i).size(); j++)
+			{
+				Tile tile = tileList.get(i).get(j);
+				if (tile.getType() == Tile.Type.EXIT)
+				{
+					maze.setExit(tile);
+					break;
+				}
+			}
+			if (maze.getExit() != null)
+			{
+				break;
+			}
+		}
+		return maze;
+	}
+
+	public static Maze fromTxt(String mazeStr) throws InvalidMazeException
+	{
+		List<List<String>> lines = new ArrayList<>();
+		String[] mazeArray = mazeStr.split("\n");
+		// System.out.println(mazeArray.length);
+		for (int i = 0; i < mazeArray.length; i++)
+		{
+			// System.out.println(i + " - " + mazeArray[i]);
+			lines.add(Arrays.asList(mazeArray[i].split("")));
+		}
+		return convert(lines);
+	}
+
+	public static Maze fromTxt(File file) throws InvalidMazeException
 	{
 		List<List<String>> lines = new ArrayList<>();
 		String line;
+		String filePath = file.getAbsolutePath();
 		try
 		(
-			BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			BufferedReader reader = new BufferedReader(new FileReader(file));
 		)
 		{
 			while ((line = reader.readLine().trim()) != null)
@@ -66,102 +172,7 @@ public class Maze implements Serializable
 		}
 		finally
 		{
-			int size = lines.get(0).size();
-			for (int i = 1; i < lines.size(); i++)
-			{
-				if (lines.get(i).size() != size)
-				{
-					System.out.println("An error occured in Maze.fromTxt() [2]");
-					return null;
-				}
-			}
-
-			int entrances = 0;
-			int exits = 0;
-			// Creates tiles ArrayList and initilises maze
-			List<List<Tile>> tileList = new ArrayList<>();
-			for (int i = 0; i < lines.get(0).size(); i++)
-			{
-				tileList.add(new ArrayList<>());
-			}
-			for (int i = lines.size() - 1; i >= 0; i--)
-			{
-				for (int j = 0; j < lines.get(i).size(); j++)
-				{
-					char chr = lines.get(i).get(j).charAt(0);
-					Tile tile = Tile.fromChar(chr);
-					tileList.get(j).add(tile);
-					if (chr == 'e')
-					{
-						entrances++;
-					}
-					else if (chr == 'x')
-					{
-						exits++;
-					}
-				}
-			}
-
-			if (entrances == 0)
-			{
-				throw new NoEntranceExcpetion();
-				// System.out.println("An error occured in Maze.fromTxt() [1]");
-				// return null;
-			}
-			else if (entrances > 1)
-			{
-				throw new MultipleEntranceExcpetion();
-				// System.out.println("An error occured in Maze.fromTxt() [2]");
-				// return null;
-			}
-			else if (exits == 0)
-			{
-				throw new NoExitException();
-				// System.out.println("An error occured in Maze.fromTxt() [3]");
-				// return null;
-			}
-			else if (exits > 1)
-			{
-				throw new MultipleExitException();
-				// System.out.println("An error occured in Maze.fromTxt() [4]");
-				// return null;
-			}
-
-			Maze maze = new Maze(tileList);
-
-			for (int i = 0; i < tileList.size(); i++)
-			{
-				for (int j = tileList.get(i).size() - 1; j >= 0; j--)
-				{
-					Tile tile = tileList.get(i).get(j);
-					if (tile.getType() == Tile.Type.ENTRANCE)
-					{
-						maze.setEntrance(tile);
-						break;
-					}
-				}
-				if (maze.getEntrance() != null)
-				{
-					break;
-				}
-			}
-			for (int i = tileList.size() - 1; i >= 0; i--)
-			{
-				for (int j = 0; j < tileList.get(i).size(); j++)
-				{
-					Tile tile = tileList.get(i).get(j);
-					if (tile.getType() == Tile.Type.EXIT)
-					{
-						maze.setExit(tile);
-						break;
-					}
-				}
-				if (maze.getExit() != null)
-				{
-					break;
-				}
-			}
-			return maze;
+			return convert(lines);
 		}
 	}
 

@@ -2,8 +2,8 @@ package maze;
 
 public class RaggedMazeException extends InvalidMazeException
 {
-	public RaggedMazeException(String message)
+	public RaggedMazeException()
 	{
-		super(message);
+		super("Maze is not of rectangular dimensions.");
 	}
 }

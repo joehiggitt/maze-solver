@@ -20,7 +20,7 @@ public class Tile implements Serializable
 		// }
 	}
 
-	protected static Tile fromChar(char symbol)
+	protected static Tile fromChar(char symbol) throws InvalidMazeException
 	{
 		switch (symbol)
 		{
@@ -33,8 +33,7 @@ public class Tile implements Serializable
 			case '#':
 				return new Tile(Type.WALL);
 			default:
-				System.out.println("An error occured in Tile.fromChar()");
-				return null;
+				throw new InvalidCharacterException();
 		}
 	}
 

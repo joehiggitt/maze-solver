@@ -1,5 +1,6 @@
 package maze.visualisation;
 
+import maze.*;
 import maze.routing.*;
 
 import javafx.stage.Stage;
@@ -17,43 +18,86 @@ import javafx.event.ActionEvent;
 
 public class LoadScreen
 {
+	private static VBox root;
+	private static Label appTitle, screenTitle, infoText, errorText;
+	private static Button openButton, backButton;
+	private static final FileChooser fileChooser = new FileChooser();
+
 	public static Scene createScene(Stage stage)
 	{
-		VBox root = Graphics.createVBox();
+		root = Graphics.createVBox();
 
-		Label appTitle = Graphics.createTitle("MazeSolver Pro", 40);
-		Label screenTitle = Graphics.createTitle("Load Maze", 30);
-		Label infoText = Graphics.createText("Enter the file path which the route file is stored:");
-		Label errorText = Graphics.createText("");
+		appTitle = Graphics.createTitle("MazeSolver Pro", 40);
+		screenTitle = Graphics.createTitle("Load Maze", 30);
+		infoText = Graphics.createText("Open either a maze text file (.txt) or a route object file (.obj)");
+		errorText = Graphics.createText("");
+		
+		fileChooser.setTitle("Open File");
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
-		// TextField textField = new TextField("/");
-		final FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Open Route File");
-		Button openButton = Graphics.createButton("Open Route File...");
-		openButton.setOnAction(new EventHandler<ActionEvent>()
+		openButton = Graphics.createButton("Open File...");
+		openButton.setOnAction(e -> load(stage));
+
+		backButton = Graphics.createButton("Back");
+		backButton.setOnAction(e ->
 		{
-			@Override
-			public void handle(final ActionEvent e)
-			{
-				File file = fileChooser.showOpenDialog(stage);
-				if (file != null)
-				{
-					RouteFinder routeFinder = RouteFinder.load(file.getAbsolutePath());
-					if (routeFinder != null)
-					{
-						stage.setScene(MazeScreen.createScene(stage, routeFinder));
-					}
-					else
-					{
-						// stage.setScene(ErrorScreen.createScene(stage));
-						System.out.println("Error occured.");
-					}
-					
-				}
-			}
+			stage.setScene(MenuScreen.createScene(stage));
 		});
 
-		root.getChildren().addAll(appTitle, screenTitle, infoText, /*textField, */openButton, errorText);
-		return new Scene(root, 600, 500);
+		root.getChildren().addAll(appTitle, screenTitle, infoText, openButton, errorText, backButton);
+		return new Scene(root, stage.getWidth(), stage.getHeight());
+	}
+
+	private static void load(Stage stage)
+	{
+		File file = fileChooser.showOpenDialog(stage);
+		RouteFinder routeFinder = null;
+		if (file == null)
+		{
+			// System.out.println("An error occured. []");
+			return;
+		}
+		String fileExt = file.getAbsolutePath().substring(file.getAbsolutePath().length() - 4);
+		if (fileExt.equals(".txt"))
+		{
+			Maze maze = null;
+			try
+			{
+				maze = Maze.fromTxt(file);
+			}
+			catch (InvalidMazeException e)
+			{
+				errorText.setText(e.getMessage());
+				// System.out.println("----------------------------------------");
+				// e.printStackTrace();
+				// System.out.println("----------------------------------------");
+			}
+			finally
+			{
+				if (maze == null)
+				{
+					return;
+				}
+				routeFinder = new RouteFinder(maze);
+			}
+		}
+		else if (fileExt.equals(".obj"))
+		{
+			routeFinder = RouteFinder.load(file);
+		}
+		else
+		{
+			errorText.setText("File type not supported.");
+			System.out.println("An error occured. [2]");
+			return;
+		}
+		if (routeFinder == null)
+		{
+			// stage.setScene(ErrorScreen.createScene(stage));
+			errorText.setText("File not compatible.");
+			System.out.println("An error occured. [3]");
+			return;
+		}
+		stage.setScene(MazeScreen.createScene(stage, routeFinder));
 	}
 }

@@ -1,5 +1,5 @@
-import maze.*;
-import maze.routing.*;
+// import maze.*;
+// import maze.routing.*;
 import maze.visualisation.*;
 
 import javafx.application.Application;

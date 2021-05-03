@@ -1,36 +1,47 @@
 package maze.visualisation;
 
+import javafx.application.Platform;
+
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
 public class MenuScreen
 {
+	private static VBox root;
+	private static HBox buttons;
+	private static Label appTitle, screenTitle;
+	private static Button fromTextButton, loadButton, quitButton;
+
 	public static Scene createScene(Stage stage)
 	{
-		VBox root = Graphics.createVBox();
+		root = Graphics.createVBox();
+		buttons = Graphics.createHBox();
 
-		Label appTitle = Graphics.createTitle("MazeSolver Pro", 40);
-		Label screenTitle = Graphics.createTitle("Menu", 30);
+		appTitle = Graphics.createTitle("MazeSolver Pro", 40);
+		screenTitle = Graphics.createTitle("Menu", 30);
 
-		Button fromTextButton = Graphics.createButton("Upload Maze From Plain Text");
-		// fromTextButton.setOnAction(e ->
-		// {
-		// 	stage.setScene(TextEnterScreen.createScene());
-		// });
+		fromTextButton = Graphics.createButton("Upload From Plain Text");
+		fromTextButton.setOnAction(e ->
+		{
+			stage.setScene(TextInputScreen.createScene(stage));
+		});
 
-		// Button loadButton = new Button("Load Maze From File");
-
-		Button loadButton = Graphics.createButton("Load Route From File");
+		loadButton = Graphics.createButton("Load From File");
 		loadButton.setOnAction(e ->
 		{
 			stage.setScene(LoadScreen.createScene(stage));
 		});
 
-		root.getChildren().addAll(appTitle, screenTitle, fromTextButton, loadButton);
-		return new Scene(root, 600, 500);
+		quitButton = Graphics.createButton("Quit");
+		quitButton.setOnAction(e -> Platform.exit());
+
+		buttons.getChildren().addAll(fromTextButton, loadButton, quitButton);
+		root.getChildren().addAll(appTitle, screenTitle, buttons);
+		return new Scene(root, stage.getWidth(), stage.getHeight());
 	}
 }

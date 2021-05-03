@@ -1,8 +1,10 @@
 package maze.visualisation;
 
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -16,7 +18,6 @@ import javafx.geometry.Insets;
 
 // import javafx.scene.Group;
 // import javafx.scene.Scene;
-// import javafx.scene.layout.HBox;
 // import javafx.scene.paint.Color;
 // import javafx.scene.shape.Arc;
 // import javafx.scene.shape.ArcType;
@@ -31,6 +32,14 @@ public class Graphics
 	public static VBox createVBox()
 	{
 		VBox box = new VBox(5);
+		box.setAlignment(Pos.CENTER);
+		box.setBackground(new Background(new BackgroundFill(Color.web("#F08D86"), CornerRadii.EMPTY, Insets.EMPTY)));
+		return box;
+	}
+
+	public static HBox createHBox()
+	{
+		HBox box = new HBox(5);
 		box.setAlignment(Pos.CENTER);
 		box.setBackground(new Background(new BackgroundFill(Color.web("#F08D86"), CornerRadii.EMPTY, Insets.EMPTY)));
 		return box;
@@ -59,5 +68,16 @@ public class Graphics
 		button.setTextFill(Color.web("#001433"));
 		button.setStyle("-fx-background-color: #ADD9B9; -fx-text-fill: #001433; -fx-border-width: 0;");
 		return button;
+	}
+
+	public static TextArea createTextArea()
+	{
+		TextArea textArea = new TextArea();
+		textArea.setFont(Font.font("Bitstream Vera Sans Mono"));
+		textArea.setPrefHeight(150);
+		textArea.setMaxHeight(600);
+		textArea.setPrefWidth(200);
+		textArea.setMaxWidth(800);
+		return textArea;
 	}
 }

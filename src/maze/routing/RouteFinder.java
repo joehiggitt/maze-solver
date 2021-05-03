@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import java.io.Serializable;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
@@ -49,10 +50,16 @@ public class RouteFinder implements Serializable
 
 	public static RouteFinder load(String filePath)
 	{
+		return load(new File(filePath));
+	}
+
+	public static RouteFinder load(File file)
+	{
+		String filePath = file.getAbsolutePath();
 		RouteFinder route = null;
 		try
 		(
-			ObjectInputStream reader = new ObjectInputStream(new FileInputStream(filePath))
+			ObjectInputStream reader = new ObjectInputStream(new FileInputStream(file))
 		)
 		{
 			route = (RouteFinder) reader.readObject();
@@ -79,9 +86,15 @@ public class RouteFinder implements Serializable
 
 	public void save(String filePath)
 	{
+		save(new File(filePath));
+	}
+
+	public void save(File file)
+	{
+		String filePath = file.getAbsolutePath();
 		try
 		(
-			ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(filePath))
+			ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(file))
 		)
 		{
 			writer.writeObject(this);
