@@ -17,6 +17,11 @@ import java.io.File;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 
+/**
+* Class that displays the save screen in the application
+* @author Joe Higgitt
+* @version 1.0, 4th May 2021
+*/
 public class SaveScreen
 {
 	private static VBox root;
@@ -25,6 +30,12 @@ public class SaveScreen
 	private static Button saveButton, backButton, menuButton;
 	private static final FileChooser fileChooser = new FileChooser();
 
+	/**
+	* Creates the save screen
+	* @param stage the main stage for the application
+	* @param routeFinder the route being saved
+	* @return Returns a {@link javafx.scene.Scene} object which contains the screen's content
+	*/
 	public static Scene createScene(Stage stage, RouteFinder routeFinder)
 	{
 		root = Graphics.createVBox();

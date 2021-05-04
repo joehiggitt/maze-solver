@@ -17,6 +17,12 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.InvalidClassException;
 
+/**
+* Class that creates a route finder object, which solves a maze step by step.
+* @author Joe Higgitt
+* @version 1.0, 4th May 2021
+* @see maze.Maze
+*/
 public class RouteFinder implements Serializable
 {
 	private Maze maze;
@@ -24,35 +30,61 @@ public class RouteFinder implements Serializable
 	private boolean finished;
 	private List<Tile> visited; // used to mark deadends
 
+	/**
+	* Constructs a route finder object.
+	* @param newMaze the {@link maze.Maze} too be solved
+	*/
 	public RouteFinder(Maze newMaze)
 	{
 		maze = newMaze;
 		route = new Stack<>();
-		finished = false;
 		route.push(maze.getEntrance());
+		finished = false;
 		visited = new ArrayList<>();
 	}
 
+	/**
+	* Gets the current maze being solved.
+	* @return Returns a {@link maze.Maze} object
+	*/
 	public Maze getMaze()
 	{
 		return maze;
 	}
 
+	/**
+	* Gets the current route that's been taken.
+	* @return Returns a {@link java.util.List} of {@link maze.Tile} objects
+	*/
 	public List<Tile> getRoute()
 	{
 		return new ArrayList<>(route);
 	}
 
+	/**
+	* Determines if the maze has been solved yet.
+	* @return Returns true if the maze has been solved, returns false otherwise
+	*/
 	public boolean isFinished()
 	{
 		return finished;
 	}
 
+	/**
+	* Creates a RouteFinder object from a file.
+	* @param filePath the file path of the file being converted
+	* @return Returns a RouteFinder object
+	*/
 	public static RouteFinder load(String filePath)
 	{
 		return load(new File(filePath));
 	}
 
+	/**
+	* Creates a RouteFinder object from a file.
+	* @param file a {@link java.io.File} object to be converted
+	* @return Returns a RouteFinder object
+	*/
 	public static RouteFinder load(File file)
 	{
 		String filePath = file.getAbsolutePath();
@@ -75,7 +107,7 @@ public class RouteFinder implements Serializable
 		}
 		catch (IOException e)
 		{
-			System.out.println("An error occured.");
+			System.out.println("An error occured. [1]");
 			e.printStackTrace();
 		}
 		finally
@@ -84,11 +116,19 @@ public class RouteFinder implements Serializable
 		}
 	}
 
+	/**
+	* Saves the current RouteFinder object in a file.
+	* @param filePath the file path for the RouteFinder to be stored in
+	*/
 	public void save(String filePath)
 	{
 		save(new File(filePath));
 	}
 
+	/**
+	* Saves the current RouteFinder object in a file.
+	* @param file a {@link java.io.File} object for the RouteFinder to be stored in
+	*/
 	public void save(File file)
 	{
 		String filePath = file.getAbsolutePath();
@@ -110,13 +150,19 @@ public class RouteFinder implements Serializable
 		}
 		catch (IOException e)
 		{
-			System.out.println("An error occured.");
+			System.out.println("An error occured. [2]");
 			e.printStackTrace();
 		}
 		finally {}
 	}
 
 	// REQUIRES TESTING
+
+	/**
+	* Takes a step through the maze. Multiple uses of the method will either solve the maze or throw a {@link maze.routing.NoRouteFoundException}.
+	* @return Returns true if the maze has been solved, returns false otherwise
+	* @throws maze.routing.NoRouteFoundException Indicates that the current maze doesn't have a solution
+	*/
 	public boolean step() throws NoRouteFoundException
 	{
 		if (route.peek().getType() == Tile.Type.EXIT)
@@ -133,13 +179,18 @@ public class RouteFinder implements Serializable
 		for (Maze.Direction direction: directions)
 		{
 			tile = maze.getAdjacentTile(currentTile, direction);
-			if ((tile != null) && (tile.getType() != Tile.Type.WALL))
+			// System.out.println("tile = " + tile);
+			// if (tile != null) System.out.println("tile.isNavigable() = " + tile.isNavigable());
+			if ((tile != null) && tile.isNavigable())
 			{
 				adjacentTiles.add(tile);
 			}
 		}
 
 		Tile selectedTile = null;
+		 // System.out.println("currentTile = " + currentTile + " - " + maze.getTileAtLocation(currentTile));
+		 // System.out.println("adjacentTiles = " + adjacentTiles);
+		 // System.out.println("adjacentTiles.size() = " + adjacentTiles.size());
 		// Checks how many tiles are adjacent
 		if (adjacentTiles.size() == 0)
 		{
@@ -150,18 +201,21 @@ public class RouteFinder implements Serializable
 		else if (adjacentTiles.size() == 1)
 		{
 			selectedTile = adjacentTiles.get(0);
-			// If the adjacent tile has already been visited (it's a dead end), then it backtracks
-			if ((route.size() > 1) && (selectedTile == route.peek()))
-			{
-				visited.add(currentTile);
-			}
+			 // System.out.println("adjacentTile = " + selectedTile + " - " + maze.getTileAtLocation(selectedTile));
 			// If the current tile is the entrance, then it moves to the next tile
-			else if (currentTile.getType() == Tile.Type.ENTRANCE)
+			if (currentTile.getType() == Tile.Type.ENTRANCE)
 			{
 				route.push(currentTile);
+				 // System.out.println("Tile at " + maze.getTileAtLocation(selectedTile) + " added to route");
 				route.push(selectedTile);
 			}
-			// If the only previous tile is the entrance, then an exception is thrown
+			// If the adjacent tile has already been visited (it's a dead end), then it backtracks
+			else if ((route.size() > 1) && (selectedTile == route.peek()))
+			{
+				 // System.out.println("Tile at " + maze.getTileAtLocation(currentTile) + " removed from route");
+				visited.add(currentTile);
+			}
+			// If the previous two cases are false, then there is no solution and an exception is thrown
 			else
 			{
 				route.push(currentTile);
@@ -174,29 +228,58 @@ public class RouteFinder implements Serializable
 			int minHeuristic = 2147483647; // uses a large dummy value
 			int heuristic = 0;
 			selectedTile = null;
+			int check = 0;
 			for (Tile adjacentTile: adjacentTiles)
 			{
+				 // System.out.println("------------------------------------");
+				 // System.out.println("adjacentTile = " + adjacentTile + " - " + maze.getTileAtLocation(adjacentTile));
 				heuristic = maze.calculateHeuristic(adjacentTile);
 				// If an adjacent tile has been marked as visited, then current tile is also marked as visited
+				 // System.out.println("visited.contains(adjacentTile) = " + visited.contains(adjacentTile));
+				 // if (!visited.contains(adjacentTile)) System.out.println("!route.contains(adjacentTile) = " + !route.contains(adjacentTile));
+				 // if (!visited.contains(adjacentTile)) System.out.println("route.contains(adjacentTile) && visited.contains(currentTile) = " + (route.contains(adjacentTile) && visited.contains(currentTile)));
+				 // if (!visited.contains(adjacentTile)) System.out.println("heuristic < minHeuristic = " + (heuristic < minHeuristic));
 				if (visited.contains(adjacentTile))
 				{
-					visited.add(currentTile);
+					check++;
+					if (check == adjacentTiles.size() - 1)
+					{
+						System.out.println("currentTile added to visited");
+						visited.add(currentTile);
+					}
 				}
-				else if (!route.contains(adjacentTile) && (heuristic < minHeuristic))
+				else if ((!route.contains(adjacentTile) || (route.contains(adjacentTile) && visited.contains(currentTile))) && (heuristic < minHeuristic))
 				{
 					minHeuristic = heuristic;
 					selectedTile = adjacentTile;
 				}
 			}
-			route.push(currentTile);
-			if (selectedTile != null)
+			 // System.out.println("------------------------------------");
+			 // if (visited.contains(currentTile)) System.out.println("Tile at " + maze.getTileAtLocation(currentTile) + " removed from route");
+			if (!visited.contains(currentTile))
 			{
+				route.push(currentTile);
+			}
+			else if (selectedTile == null)
+			{
+				for (Tile adjacentTile: adjacentTiles)
+				{
+					if (!visited.contains(adjacentTile))
+					{
+						selectedTile = adjacentTile;
+						break;
+					}
+				}
+			}
+			if ((selectedTile != null) && !route.contains(selectedTile))
+			{
+				 // System.out.println("Tile at " + maze.getTileAtLocation(selectedTile) + " added to route");
 				route.push(selectedTile);
 			}
-			else
-			{
-				throw new NoRouteFoundException();
-			}
+			// else
+			// {
+			// 	throw new NoRouteFoundException();
+			// }
 		}
 		if (route.peek().getType() == Tile.Type.EXIT)
 		{
@@ -206,6 +289,10 @@ public class RouteFinder implements Serializable
 		return false;
 	}
 
+	/**
+	* Gets the String representation of the curent route being taken through the maze.
+	* @return Returns a {@link java.lang.String} object containing a visual representation of the route
+	*/
 	public String toString()
 	{
 		List<List<Tile>> tiles = maze.getTiles();

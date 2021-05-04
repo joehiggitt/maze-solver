@@ -14,6 +14,11 @@ import java.io.InvalidClassException;
 
 import java.lang.Math;
 
+/**
+* Class that creates a maze object which can then be solved.
+* @author Joe Higgitt
+* @version 1.0, 4th May 2021
+*/
 public class Maze implements Serializable
 {
 	private Tile entrance;
@@ -69,11 +74,11 @@ public class Maze implements Serializable
 
 		if (entrances == 0)
 		{
-			throw new NoEntranceExcpetion();
+			throw new NoEntranceException();
 		}
 		else if (entrances > 1)
 		{
-			throw new MultipleEntranceExcpetion();
+			throw new MultipleEntranceException();
 		}
 		else if (exits == 0)
 		{
@@ -121,7 +126,13 @@ public class Maze implements Serializable
 		return maze;
 	}
 
-	public static Maze fromTxt(String mazeStr) throws InvalidMazeException
+	/**
+	* Creates a Maze object from a {@link java.lang.String} representation of the maze.
+	* @param mazeStr the String representation of the maze
+	* @return Returns a Maze object which stores the maze
+	* @throws maze.InvalidMazeException Indicates that maze trying to be converted to an object is invalid
+	*/
+	public static Maze fromStr(String mazeStr) throws InvalidMazeException
 	{
 		List<List<String>> lines = new ArrayList<>();
 		String[] mazeArray = mazeStr.split("\n");
@@ -134,6 +145,23 @@ public class Maze implements Serializable
 		return convert(lines);
 	}
 
+	/**
+	* Creates a maze object from a file.
+	* @param filePath the file path of the file being converted
+	* @return Returns a maze object
+	* @throws maze.InvalidMazeException Indicates that maze trying to be converted to an object is invalid
+	*/
+	public static Maze fromTxt(String filePath) throws InvalidMazeException
+	{
+		return fromTxt(new File(filePath));
+	}
+
+	/**
+	* Creates a Maze object from a file.
+	* @param file a {@link java.io.File} object to be converted
+	* @return Returns a Maze object
+	* @throws maze.InvalidMazeException Indicates that maze trying to be converted to an object is invalid
+	*/
 	public static Maze fromTxt(File file) throws InvalidMazeException
 	{
 		List<List<String>> lines = new ArrayList<>();
@@ -176,6 +204,12 @@ public class Maze implements Serializable
 		}
 	}
 
+	/**
+	* Gets the adjacent tile to the current tile in a certain direction.
+	* @param tile the current tile
+	* @param dir the direction of the adjacent tile wanted
+	* @return Returns a {@link maze.Tile} object for the adjacent tile as long as the adjacent tile is within the grid, returns null otherwise
+	*/
 	public Tile getAdjacentTile(Tile tile, Direction dir)
 	{
 		Coordinate coord = getTileAtLocation(tile);
@@ -217,16 +251,29 @@ public class Maze implements Serializable
 		}
 	}
 
+	/**
+	* Gets the entrance of the current maze.
+	* @return Returns a {@link maze.Tile} object of the entrance
+	*/
 	public Tile getEntrance()
 	{
 		return entrance;
 	}
 
+	/**
+	* Gets the exit of the current maze.
+	* @return Returns a {@link maze.Tile} object of the exit
+	*/
 	public Tile getExit()
 	{
 		return exit;
 	}
 
+	/**
+	* Gets the tile at a given coordinate.
+	* @param coord the coordinates of the tile wanted
+	* @return Returns a {@link maze.Tile} object
+	*/
 	public Tile getTileAtLocation(Coordinate coord)
 	{
 		int x = coord.getX();
@@ -239,6 +286,11 @@ public class Maze implements Serializable
 		return null;
 	}
 
+	/**
+	* Gets the coordinates of a given tile.
+	* @param tile the tile whose coordinates are wanted
+	* @return Returns a {@link maze.Maze.Coordinate} object
+	*/
 	public Coordinate getTileAtLocation(Tile tile)
 	{
 		for (int x = 0; x < tiles.size(); x++)
@@ -255,21 +307,53 @@ public class Maze implements Serializable
 		return null;
 	}
 
+	/**
+	* Gets the current maze tiles.
+	* @return Returns a {@link java.util.List} of {@link maze.Tile} objects
+	*/
 	public List<List<Tile>> getTiles()
 	{
 		return tiles;
 	}
 
-	private void setEntrance(Tile newEntrance)
+	private void setEntrance(Tile newEntrance) throws InvalidMazeException
 	{
+		if (newEntrance.getType() != Tile.Type.ENTRANCE)
+		{
+			throw new InvalidMazeException("Tile of type " + newEntrance.getType() + " tried to become entrance");
+		}
+		else if (getTileAtLocation(newEntrance) == null)
+		{
+			throw new InvalidMazeException("Tile not in maze");
+		}
+		else if (entrance != null)
+		{
+			throw new MultipleEntranceException();
+		}
 		entrance = newEntrance;
 	}
 
-	private void setExit(Tile newExit)
+	private void setExit(Tile newExit) throws InvalidMazeException
 	{
+		if (exit != null)
+		{
+			throw new MultipleExitException();
+		}
+		else if (newExit.getType() != Tile.Type.EXIT)
+		{
+			throw new InvalidMazeException("Tile of type " + newExit.getType() + " tried to become exit");
+		}
+		else if (getTileAtLocation(newExit) == null)
+		{
+			throw new InvalidMazeException("Tile not in maze");
+		}
 		exit = newExit;
 	}
 
+	/**
+	* Gets the String representation of the maze.
+	* @return Returns a {@link java.lang.String} object containing a visual representation of the maze
+	*/
 	public String toString()
 	{
 		List<String> mazeList = new ArrayList<>();
@@ -341,6 +425,11 @@ public class Maze implements Serializable
 	}
 
 
+	/**
+	* Calculates the heuristic between the current tile and the exit.
+	* @param tile the current tile
+	* @return Returns an int representing the 'block' distance to the exit
+	*/
 	public int calculateHeuristic(Tile tile)
 	{
 		Tile.Type type = tile.getType();
@@ -363,33 +452,62 @@ public class Maze implements Serializable
 	}
 
 
+	/**
+	* Class that defines a coordinate object which can represent a tile in the maze.
+	* @author Joe Higgitt
+	* @version 1.0, 4th May 2021
+	* @see maze.Maze
+	*/
 	public class Coordinate
 	{
 		private int x;
 		private int y;
 
+		/**
+		* Constructs a new coordinate object
+		* @param newX the x coordinate
+		* @param newY the y coordinate
+		*/
 		public Coordinate(int newX, int newY)
 		{
 			x = newX;
 			y = newY;
 		}
 
+		/**
+		* Gets the x value of the coordinate.
+		* @return Returns an int representing the x coordinate
+		*/
 		public int getX()
 		{
 			return x;
 		}
 
+		/**
+		* Gets the y value of the coordinate.
+		* @return Returns an int representing the y coordinate
+		*/
 		public int getY()
 		{
 			return y;
 		}
 
+		/**
+		* Gets a String representation of the coordinate.
+		* @return Returns an {@link java.lang.String} object representing the current coordinates
+		*/
 		public String toString()
 		{
 			return "(" + x + ", " + y + ")";
 		}
 	}
 
+	/**
+	* Enumerate that defines a direction which can be taken in the maze.
+	* @author Joe Higgitt
+	* @version 1.0, 4th May 2021
+	* @see maze.Maze
+	*/
 	public enum Direction
 	{
 		NORTH,

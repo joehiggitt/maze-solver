@@ -14,6 +14,11 @@ import javafx.scene.control.TextArea;
 // import javafx.event.EventHandler;
 // import javafx.event.ActionEvent;
 
+/**
+* Class that displays the plain text input screen in the application
+* @author Joe Higgitt
+* @version 1.0, 4th May 2021
+*/
 public class TextInputScreen
 {
 	private static VBox root;
@@ -21,6 +26,11 @@ public class TextInputScreen
 	private static Button submitButton, backButton;
 	private static TextArea textBox;
 
+	/**
+	* Creates the plain text input screen
+	* @param stage the main stage for the application
+	* @return Returns a {@link javafx.scene.Scene} object which contains the screen's content
+	*/
 	public static Scene createScene(Stage stage)
 	{
 		root = Graphics.createVBox();
@@ -52,7 +62,7 @@ public class TextInputScreen
 		Maze maze = null;
 		try
 		{
-			maze = Maze.fromTxt(textBox.getText());
+			maze = Maze.fromStr(textBox.getText());
 		}
 		catch (InvalidMazeException e)
 		{

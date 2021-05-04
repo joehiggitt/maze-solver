@@ -295,7 +295,7 @@ public class MazeTest {
         assertTrue(checkIfSetEntranceThrowsMultipleEntranceExceptionIfEntranceNotEmpty(maze));
     }
 
-    @Test
+    @Test // failed
     public void ensureSetEntranceFailsIfTileNotInMaze() {
         Maze maze = setupForMaze1();
         Tile newEntrance = fromChar('e');
@@ -419,7 +419,7 @@ public class MazeTest {
         assertTrue(checkIfSetExitThrowsMultipleExitExceptionIfExitNotEmpty(maze));
     }
 
-    @Test
+    @Test // failed
     public void ensureSetExitFailsIfTileNotInMaze() {
         Maze maze = setupForMaze1();
         Tile newExit = fromChar('x');

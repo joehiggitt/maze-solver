@@ -27,8 +27,17 @@ import javafx.geometry.Insets;
 // import javafx.scene.shape.Rectangle;
 // import javafx.scene.shape.Polygon;
 
+/**
+* Class that generates the graphics in the MazeSovler Pro application so that there is consistency.
+* @author Joe Higgitt
+* @version 1.0, 4th May 2021
+*/
 public class Graphics
 {
+	/**
+	* Creates a vertical box element with the application styling
+	* @return Returns a {@link javafx.scene.layout.VBox} object
+	*/
 	public static VBox createVBox()
 	{
 		VBox box = new VBox(5);
@@ -37,6 +46,10 @@ public class Graphics
 		return box;
 	}
 
+	/**
+	* Creates a horizontal box element with the application styling
+	* @return Returns a {@link javafx.scene.layout.HBox} object
+	*/
 	public static HBox createHBox()
 	{
 		HBox box = new HBox(5);
@@ -45,6 +58,10 @@ public class Graphics
 		return box;
 	}
 
+	/**
+	* Creates a title element with the application styling
+	* @return Returns a {@link javafx.scene.control.Label} object
+	*/
 	public static Label createTitle(String text, int size)
 	{
 		Label title = new Label(text);
@@ -53,6 +70,10 @@ public class Graphics
 		return title;
 	}
 
+	/**
+	* Creates a text element with the application styling
+	* @return Returns a {@link javafx.scene.control.Label} object
+	*/
 	public static Label createText(String text)
 	{
 		Label label = new Label(text);
@@ -61,6 +82,10 @@ public class Graphics
 		return label;
 	}
 
+	/**
+	* Creates a button element with the application styling
+	* @return Returns a {@link javafx.scene.control.Button} object
+	*/
 	public static Button createButton(String text)
 	{
 		Button button = new Button(text);
@@ -70,6 +95,10 @@ public class Graphics
 		return button;
 	}
 
+	/**
+	* Creates a text box element with the application styling
+	* @return Returns a {@link javafx.scene.control.TextArea} object
+	*/
 	public static TextArea createTextArea()
 	{
 		TextArea textArea = new TextArea();

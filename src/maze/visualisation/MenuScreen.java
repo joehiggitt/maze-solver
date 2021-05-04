@@ -10,6 +10,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
+/**
+* Class that displays the menu screen in the application
+* @author Joe Higgitt
+* @version 1.0, 4th May 2021
+*/
 public class MenuScreen
 {
 	private static VBox root;
@@ -17,6 +22,11 @@ public class MenuScreen
 	private static Label appTitle, screenTitle;
 	private static Button fromTextButton, loadButton, quitButton;
 
+	/**
+	* Creates the menu screen
+	* @param stage the main stage for the application
+	* @return Returns a {@link javafx.scene.Scene} object which contains the screen's content
+	*/
 	public static Scene createScene(Stage stage)
 	{
 		root = Graphics.createVBox();

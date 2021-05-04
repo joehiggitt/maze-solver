@@ -394,7 +394,7 @@ public class RouteFinderTest {
         ensureRoute(route, 12);
     }
 
-    @Test
+    @Test // failed
     public void ensureStepSolvesMaze2() {
         RouteFinder route = setupForMaze2();
 

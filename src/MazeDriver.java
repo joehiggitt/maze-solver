@@ -1,6 +1,5 @@
 import maze.*;
 import maze.routing.*;
-import javafx.scene.text.Font;
 
 public class MazeDriver
 {
@@ -11,36 +10,49 @@ public class MazeDriver
 
 		try
 		{
-			maze = Maze.fromTxt(maze1);
+			maze = Maze.fromTxt("/home/csimage/GitRepos/comp16412/comp16412-coursework-2_w81310jh/resources/mazes/maze3.txt");
 		}
 		catch (InvalidMazeException e)
 		{
-			System.out.println("An error occured.");
 			e.printStackTrace();
 		}
-		// RouteFinder route = RouteFinder.load("/home/csimage/GitRepos/comp16412/comp16412-coursework-2_w81310jh/resources/route1.obj");
-		// while (!route.isFinished())
-		// // for (int i = 0; i < 5; i++)
+
+		// try
 		// {
+		// 	Tile newEntrance = Tile.fromChar('e');
 		// 	try
 		// 	{
-		// 		route.step();
+		// 		maze.setEntrance(newEntrance);
 		// 	}
-		// 	catch (NoRouteFoundException e)
+		// 	catch (InvalidMazeException e)
 		// 	{
-		// 		System.out.println("An error occured.");
 		// 		e.printStackTrace();
-		// 		break;
 		// 	}
-		// 	System.out.println(route);
-		// 	System.out.println("\n----------------------------------------\n");
 		// }
-		// System.out.println(route.getRoute());
+		// catch (InvalidMazeException e)
+		// {
+		// 	e.printStackTrace();
+		// }
 
+		
 
-		for (String font: Font.getFamilies())
+		RouteFinder route = new RouteFinder(maze);
+		while (!route.isFinished())
+		// for (int i = 0; i < 5; i++)
 		{
-			System.out.println(font);
+			System.out.println("\n----------------------------------------------\n");
+			System.out.println(route + "\n");
+			try
+			{
+				route.step();
+			}
+			catch (NoRouteFoundException e)
+			{
+				System.out.println("An error occured.");
+				e.printStackTrace();
+				break;
+			}
 		}
+		System.out.println(route.getRoute());
 	}
 }

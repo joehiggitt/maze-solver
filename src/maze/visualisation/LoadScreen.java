@@ -16,6 +16,11 @@ import java.io.File;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 
+/**
+* Class that displays the load screen in the application
+* @author Joe Higgitt
+* @version 1.0, 4th May 2021
+*/
 public class LoadScreen
 {
 	private static VBox root;
@@ -23,6 +28,11 @@ public class LoadScreen
 	private static Button openButton, backButton;
 	private static final FileChooser fileChooser = new FileChooser();
 
+	/**
+	* Creates the load screen
+	* @param stage the main stage for the application
+	* @return Returns a {@link javafx.scene.Scene} object which contains the screen's content
+	*/
 	public static Scene createScene(Stage stage)
 	{
 		root = Graphics.createVBox();
