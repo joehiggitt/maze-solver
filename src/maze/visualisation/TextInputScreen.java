@@ -22,7 +22,7 @@ import javafx.scene.control.TextArea;
 public class TextInputScreen
 {
 	private static VBox root;
-	private static Label appTitle, screenTitle, info1Text, info2Text, errorText;
+	private static Label screenTitle, info1Text, info2Text, errorText;
 	private static Button submitButton, backButton;
 	private static TextArea textBox;
 
@@ -35,7 +35,6 @@ public class TextInputScreen
 	{
 		root = Graphics.createVBox();
 
-		appTitle = Graphics.createTitle("MazeSolver Pro", 40);
 		screenTitle = Graphics.createTitle("Load Maze", 30);
 		info1Text = Graphics.createText("Enter the maze into the text box");
 		info2Text = Graphics.createText("Use the following symbols for different blocks\n# - Wall    . - Path    e - Entrance    x - Exit");
@@ -53,7 +52,7 @@ public class TextInputScreen
 			stage.setScene(MenuScreen.createScene(stage));
 		});
 
-		root.getChildren().addAll(appTitle, screenTitle, info1Text, textBox, info2Text, errorText, submitButton, backButton);
+		root.getChildren().addAll(screenTitle, info1Text, textBox, info2Text, errorText, submitButton, backButton);
 		return new Scene(root, stage.getWidth(), stage.getHeight());
 	}
 

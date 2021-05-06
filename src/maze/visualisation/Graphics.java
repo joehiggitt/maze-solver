@@ -1,31 +1,23 @@
 package maze.visualisation;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
-
-// import javafx.scene.Group;
-// import javafx.scene.Scene;
-// import javafx.scene.paint.Color;
-// import javafx.scene.shape.Arc;
-// import javafx.scene.shape.ArcType;
-// import javafx.scene.shape.Circle;
-// import javafx.scene.text.Font;
-// import javafx.scene.text.Text;
-// import javafx.scene.shape.Rectangle;
-// import javafx.scene.shape.Polygon;
 
 /**
 * Class that generates the graphics in the MazeSovler Pro application so that there is consistency.
@@ -60,6 +52,8 @@ public class Graphics
 
 	/**
 	* Creates a title element with the application styling
+	* @param text the text content of the title
+	* @param size the size of the title (used to differentiate application title or scene title)
 	* @return Returns a {@link javafx.scene.control.Label} object
 	*/
 	public static Label createTitle(String text, int size)
@@ -72,6 +66,7 @@ public class Graphics
 
 	/**
 	* Creates a text element with the application styling
+	* @param text the text content of the element
 	* @return Returns a {@link javafx.scene.control.Label} object
 	*/
 	public static Label createText(String text)
@@ -84,6 +79,7 @@ public class Graphics
 
 	/**
 	* Creates a button element with the application styling
+	* @param text the text content of the button
 	* @return Returns a {@link javafx.scene.control.Button} object
 	*/
 	public static Button createButton(String text)
@@ -108,5 +104,88 @@ public class Graphics
 		textArea.setPrefWidth(200);
 		textArea.setMaxWidth(800);
 		return textArea;
+	}
+
+	/**
+	* Creates an ImageView element with the application dimensions
+	* @param image the image to be displayed
+	* @return Returns a {@link javafx.scene.image.ImageView} object
+	*/
+	public static ImageView createGridImage(Image image)
+	{
+		ImageView imageView = new ImageView();
+		imageView.setImage(image);
+		imageView.setX(0);
+		imageView.setY(0);
+		imageView.setFitHeight(50);
+		imageView.setFitWidth(50);
+		imageView.setPreserveRatio(true);
+		return imageView;
+	}
+
+	/**
+	* Reads in the images used in the maze/route visualisation
+	* @return Returns an array of 8 images
+	*/
+	public static Image[] getImages()
+	{
+		Image[] images = new Image[8];
+		try
+		{
+			images[0] = new Image(new FileInputStream("resources/images/PathSquare.png"));
+		}
+		catch (IOException e) {}
+		finally {}
+
+		try
+		{
+			images[1] = new Image(new FileInputStream("resources/images/PathSquareVisited.png"));
+		}
+		catch (IOException e) {}
+		finally {}
+
+		try
+		{
+			images[2] = new Image(new FileInputStream("resources/images/EntranceSquare.png"));
+		}
+		catch (IOException e) {}
+		finally {}
+
+		try
+		{
+			images[3] = new Image(new FileInputStream("resources/images/EntranceSquareVisited.png"));
+		}
+		catch (IOException e) {}
+		finally {}
+
+		try
+		{
+			images[4] = new Image(new FileInputStream("resources/images/ExitSquare.png"));
+		}
+		catch (IOException e) {}
+		finally {}
+
+		try
+		{
+			images[5] = new Image(new FileInputStream("resources/images/ExitSquareVisited.png"));
+		}
+		catch (IOException e) {}
+		finally {}
+
+		try
+		{
+			images[6] = new Image(new FileInputStream("resources/images/WallSquare.png"));
+		}
+		catch (IOException e) {}
+		finally {}
+
+		try
+		{
+			images[7] = new Image(new FileInputStream("resources/images/OuterWallSquare.png"));
+		}
+		catch (IOException e) {}
+		finally {}
+
+		return images;
 	}
 }

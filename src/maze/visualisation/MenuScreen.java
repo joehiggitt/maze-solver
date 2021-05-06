@@ -6,7 +6,6 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
@@ -18,8 +17,7 @@ import javafx.scene.control.Button;
 public class MenuScreen
 {
 	private static VBox root;
-	private static HBox buttons;
-	private static Label appTitle, screenTitle;
+	private static Label appTitle, screenTitle, infoText;
 	private static Button fromTextButton, loadButton, quitButton;
 
 	/**
@@ -29,11 +27,22 @@ public class MenuScreen
 	*/
 	public static Scene createScene(Stage stage)
 	{
+		return createScene(stage, "");
+	}
+
+	/**
+	* Creates the menu screen with some information text
+	* @param stage the main stage for the application
+	* @param info the information wanting to be displayed
+	* @return Returns a {@link javafx.scene.Scene} object which contains the screen's content
+	*/
+	public static Scene createScene(Stage stage, String info)
+	{
 		root = Graphics.createVBox();
-		buttons = Graphics.createHBox();
 
 		appTitle = Graphics.createTitle("MazeSolver Pro", 40);
 		screenTitle = Graphics.createTitle("Menu", 30);
+		infoText = Graphics.createText(info);
 
 		fromTextButton = Graphics.createButton("Upload From Plain Text");
 		fromTextButton.setOnAction(e ->
@@ -50,8 +59,7 @@ public class MenuScreen
 		quitButton = Graphics.createButton("Quit");
 		quitButton.setOnAction(e -> Platform.exit());
 
-		buttons.getChildren().addAll(fromTextButton, loadButton, quitButton);
-		root.getChildren().addAll(appTitle, screenTitle, buttons);
+		root.getChildren().addAll(appTitle, screenTitle, fromTextButton, loadButton, quitButton, infoText);
 		return new Scene(root, stage.getWidth(), stage.getHeight());
 	}
 }

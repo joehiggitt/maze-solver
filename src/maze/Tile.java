@@ -67,7 +67,7 @@ public class Tile implements Serializable
 			case WALL:
 				return false;
 			default:
-				System.out.println("An error occured in Tile.isNavigable()");
+				// System.out.println("An error occured in Tile.isNavigable()");
 				return false;
 		}
 	}
@@ -89,7 +89,7 @@ public class Tile implements Serializable
 			case WALL:
 				return "#";
 			default:
-				System.out.println("An error occured in Tile.toString()");
+				// System.out.println("An error occured in Tile.toString()");
 				return "⚠";
 		}
 	}

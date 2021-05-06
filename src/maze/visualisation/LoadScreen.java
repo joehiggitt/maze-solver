@@ -24,7 +24,7 @@ import javafx.event.ActionEvent;
 public class LoadScreen
 {
 	private static VBox root;
-	private static Label appTitle, screenTitle, infoText, errorText;
+	private static Label screenTitle, infoText, errorText;
 	private static Button openButton, backButton;
 	private static final FileChooser fileChooser = new FileChooser();
 
@@ -37,7 +37,6 @@ public class LoadScreen
 	{
 		root = Graphics.createVBox();
 
-		appTitle = Graphics.createTitle("MazeSolver Pro", 40);
 		screenTitle = Graphics.createTitle("Load Maze", 30);
 		infoText = Graphics.createText("Open either a maze text file (.txt) or a route object file (.obj)");
 		errorText = Graphics.createText("");
@@ -54,7 +53,7 @@ public class LoadScreen
 			stage.setScene(MenuScreen.createScene(stage));
 		});
 
-		root.getChildren().addAll(appTitle, screenTitle, infoText, openButton, errorText, backButton);
+		root.getChildren().addAll(screenTitle, infoText, openButton, errorText, backButton);
 		return new Scene(root, stage.getWidth(), stage.getHeight());
 	}
 

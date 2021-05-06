@@ -17,9 +17,12 @@ public class MazeApplication extends Application
 	* @param stage the stage which the application is opened into
 	*/
 	@Override
-	public void start(Stage stage)
+	public void start(Stage stage) throws maze.InvalidMazeException
 	{
-		stage.setScene(MenuScreen.createScene(stage));
+		maze.routing.RouteFinder routeFinder = new maze.routing.RouteFinder(maze.Maze.fromTxt("resources/mazes/maze2.txt"));
+		stage.setScene(MazeScreen.createScene(stage, routeFinder));
+
+		// stage.setScene(MenuScreen.createScene(stage));
 
 		stage.setTitle("MazeSolver Pro");
 		stage.setMinHeight(500);

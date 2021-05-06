@@ -26,7 +26,7 @@ public class SaveScreen
 {
 	private static VBox root;
 	private static HBox buttons;
-	private static Label appTitle, screenTitle, infoText, errorText;
+	private static Label screenTitle, infoText, errorText;
 	private static Button saveButton, backButton, menuButton;
 	private static final FileChooser fileChooser = new FileChooser();
 
@@ -41,7 +41,6 @@ public class SaveScreen
 		root = Graphics.createVBox();
 		buttons = Graphics.createHBox();
 
-		appTitle = Graphics.createTitle("MazeSolver Pro", 40);
 		screenTitle = Graphics.createTitle("Save Route", 30);
 		infoText = Graphics.createText("Save your current route progress as a route object file (.obj)");
 		errorText = Graphics.createText("");
@@ -66,7 +65,7 @@ public class SaveScreen
 		});
 
 		buttons.getChildren().addAll(backButton, menuButton);
-		root.getChildren().addAll(appTitle, screenTitle, infoText, saveButton, errorText, buttons);
+		root.getChildren().addAll(screenTitle, infoText, saveButton, errorText, buttons);
 		return new Scene(root, stage.getWidth(), stage.getHeight());
 	}
 
@@ -79,6 +78,6 @@ public class SaveScreen
 			return;
 		}
 		routeFinder.save(file);
-		stage.setScene(MenuScreen.createScene(stage));
+		stage.setScene(MenuScreen.createScene(stage, file.getName() + " saved successfully"));
 	}
 }

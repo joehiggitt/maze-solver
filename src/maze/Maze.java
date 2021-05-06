@@ -98,8 +98,15 @@ public class Maze implements Serializable
 				Tile tile = tileList.get(i).get(j);
 				if (tile.getType() == Tile.Type.ENTRANCE)
 				{
-					maze.setEntrance(tile);
-					break;
+					if ((i == 0) || (j == 0) || (i == tileList.size() - 1) || (j == tileList.get(0).size() - 1))
+					{
+						maze.setEntrance(tile);
+						break;
+					}
+					else
+					{
+						throw new InvalidMazeException("Entrance must be at the edge of maze.");
+					}
 				}
 			}
 			if (maze.getEntrance() != null)
@@ -114,8 +121,15 @@ public class Maze implements Serializable
 				Tile tile = tileList.get(i).get(j);
 				if (tile.getType() == Tile.Type.EXIT)
 				{
-					maze.setExit(tile);
-					break;
+					if ((i == 0) || (j == 0) || (i == tileList.size() - 1) || (j == tileList.get(0).size() - 1))
+					{
+						maze.setExit(tile);
+						break;
+					}
+					else
+					{
+						throw new InvalidMazeException("Exit must be at the edge of maze.");
+					}
 				}
 			}
 			if (maze.getExit() != null)
@@ -136,10 +150,8 @@ public class Maze implements Serializable
 	{
 		List<List<String>> lines = new ArrayList<>();
 		String[] mazeArray = mazeStr.split("\n");
-		// System.out.println(mazeArray.length);
 		for (int i = 0; i < mazeArray.length; i++)
 		{
-			// System.out.println(i + " - " + mazeArray[i]);
 			lines.add(Arrays.asList(mazeArray[i].split("")));
 		}
 		return convert(lines);
@@ -180,22 +192,22 @@ public class Maze implements Serializable
 				}
 				lines.add(Arrays.asList(line.split("")));
 			}
-			System.out.println(filePath + " read successfully.");
+			// System.out.println(filePath + " read successfully.");
 		}
 		catch (FileNotFoundException e)
 		{
-			System.out.println(filePath + " not found.");
+			// System.out.println(filePath + " not found.");
 			return null;
 		}
 		catch (InvalidClassException e)
 		{
-			System.out.println(filePath + " is not compatible.");
+			// System.out.println(filePath + " is not compatible.");
 			return null;
 		}
 		catch (IOException e)
 		{
-			System.out.println("An error occured in Maze.fromTxt() [1]");
-			e.printStackTrace();
+			// System.out.println("An error occured in Maze.fromTxt() [1]");
+			// e.printStackTrace();
 			return null;
 		}
 		finally
@@ -246,7 +258,7 @@ public class Maze implements Serializable
 				// System.out.println("Can't go west");
 				return null;
 			default:
-				System.out.println("An error occured in Maze.getAdjacentTile()");
+				// System.out.println("An error occured in Maze.getAdjacentTile()");
 				return null;
 		}
 	}
@@ -282,7 +294,7 @@ public class Maze implements Serializable
 		{
 			return tiles.get(x).get(y);
 		}
-		System.out.println("Tile not found [1]");
+		// System.out.println("Tile not found [1]");
 		return null;
 	}
 
@@ -303,7 +315,7 @@ public class Maze implements Serializable
 				}
 			}
 		}
-		System.out.println("Tile not found [2]");
+		// System.out.println("Tile not found [2]");
 		return null;
 	}
 
