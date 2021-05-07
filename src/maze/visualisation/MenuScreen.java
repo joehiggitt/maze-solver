@@ -60,6 +60,6 @@ public class MenuScreen
 		quitButton.setOnAction(e -> Platform.exit());
 
 		root.getChildren().addAll(appTitle, screenTitle, fromTextButton, loadButton, quitButton, infoText);
-		return new Scene(root, stage.getWidth(), stage.getHeight());
+		return new Scene(root, stage.getWidth(), stage.getHeight() - 26);
 	}
 }

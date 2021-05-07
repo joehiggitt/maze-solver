@@ -38,7 +38,6 @@ public class RouteFinder implements Serializable
 	{
 		maze = newMaze;
 		route = new Stack<>();
-		route.push(maze.getEntrance());
 		finished = false;
 		visited = new ArrayList<>();
 	}
@@ -165,6 +164,11 @@ public class RouteFinder implements Serializable
 	*/
 	public boolean step() throws NoRouteFoundException
 	{
+		if (route.size() == 0)
+		{
+			route.push(maze.getEntrance());
+			return false;
+		}
 		if (route.peek().getType() == Tile.Type.EXIT)
 		{
 			// System.out.println("Maze already solved.");
@@ -176,6 +180,7 @@ public class RouteFinder implements Serializable
 		Maze.Direction[] directions = Maze.Direction.values();
 		Tile tile = null;
 
+		// Gets list of valid adjacent tiles
 		for (Maze.Direction direction: directions)
 		{
 			tile = maze.getAdjacentTile(currentTile, direction);
@@ -186,6 +191,7 @@ public class RouteFinder implements Serializable
 		}
 
 		Tile selectedTile = null;
+
 		// Checks how many tiles are adjacent
 		if (adjacentTiles.size() == 0)
 		{
@@ -220,15 +226,24 @@ public class RouteFinder implements Serializable
 			int minHeuristic = 2147483647; // uses a large dummy value
 			int heuristic = 0;
 			selectedTile = null;
-			int check = 0;
+			int visitCheck = 0;
+			int routeCheck = 0;
 			for (Tile adjacentTile: adjacentTiles)
 			{
 				heuristic = maze.calculateHeuristic(adjacentTile);
 				// If an adjacent tile has been marked as visited, then current tile is also marked as visited
+				if (route.contains(adjacentTile))
+				{
+					routeCheck++;
+					if (routeCheck == adjacentTiles.size())
+					{
+						visited.add(currentTile);
+					}
+				}
 				if (visited.contains(adjacentTile))
 				{
-					check++;
-					if (check == adjacentTiles.size() - 1)
+					visitCheck++;
+					if (visitCheck == adjacentTiles.size() - 1)
 					{
 						visited.add(currentTile);
 					}
@@ -258,10 +273,10 @@ public class RouteFinder implements Serializable
 			{
 				route.push(selectedTile);
 			}
-			// else
-			// {
-			// 	throw new NoRouteFoundException();
-			// }
+			if (selectedTile == null)
+			{
+				throw new NoRouteFoundException();
+			}
 		}
 		if (route.peek().getType() == Tile.Type.EXIT)
 		{

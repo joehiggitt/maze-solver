@@ -66,7 +66,7 @@ public class SaveScreen
 
 		buttons.getChildren().addAll(backButton, menuButton);
 		root.getChildren().addAll(screenTitle, infoText, saveButton, errorText, buttons);
-		return new Scene(root, stage.getWidth(), stage.getHeight());
+		return new Scene(root, stage.getWidth(), stage.getHeight() - 26);
 	}
 
 	private static void save(Stage stage, RouteFinder routeFinder)
@@ -76,6 +76,11 @@ public class SaveScreen
 		if (file == null)
 		{
 			return;
+		}
+		String fileExt = file.getAbsolutePath().substring(file.getAbsolutePath().length() - 4);
+		if (!fileExt.equals(".obj"))
+		{
+			file = new File(file.getAbsolutePath() + ".obj");
 		}
 		routeFinder.save(file);
 		stage.setScene(MenuScreen.createScene(stage, file.getName() + " saved successfully"));

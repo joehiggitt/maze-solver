@@ -53,7 +53,7 @@ public class TextInputScreen
 		});
 
 		root.getChildren().addAll(screenTitle, info1Text, textBox, info2Text, errorText, submitButton, backButton);
-		return new Scene(root, stage.getWidth(), stage.getHeight());
+		return new Scene(root, stage.getWidth(), stage.getHeight() - 26);
 	}
 
 	private static void load(Stage stage)

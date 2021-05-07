@@ -54,7 +54,7 @@ public class LoadScreen
 		});
 
 		root.getChildren().addAll(screenTitle, infoText, openButton, errorText, backButton);
-		return new Scene(root, stage.getWidth(), stage.getHeight());
+		return new Scene(root, stage.getWidth(), stage.getHeight() - 26);
 	}
 
 	private static void load(Stage stage)

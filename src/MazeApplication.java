@@ -12,6 +12,9 @@ import javafx.scene.Scene;
 */	
 public class MazeApplication extends Application
 {
+	// THERE IS SOMETIMES A RARE JAVAFX ERROR WITH THE GRIDPANE WHERE THE GRID COLLAPSES OVER ITSELF
+	// I think it's an error in the javafx library I used since there are no obvious errors in the code used to create it
+
 	/**
 	* Starts the application when called.
 	* @param stage the stage which the application is opened into
@@ -19,14 +22,11 @@ public class MazeApplication extends Application
 	@Override
 	public void start(Stage stage) throws maze.InvalidMazeException
 	{
-		maze.routing.RouteFinder routeFinder = new maze.routing.RouteFinder(maze.Maze.fromTxt("resources/mazes/maze2.txt"));
-		stage.setScene(MazeScreen.createScene(stage, routeFinder));
-
-		// stage.setScene(MenuScreen.createScene(stage));
+		stage.setScene(MenuScreen.createScene(stage));
 
 		stage.setTitle("MazeSolver Pro");
-		stage.setMinHeight(500);
-		stage.setMinWidth(600);
+		stage.setMinHeight(600);
+		stage.setMinWidth(800);
 		stage.show();
 	}
 

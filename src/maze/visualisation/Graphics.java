@@ -109,16 +109,17 @@ public class Graphics
 	/**
 	* Creates an ImageView element with the application dimensions
 	* @param image the image to be displayed
+	<!-- * @param size the size of the images -->
 	* @return Returns a {@link javafx.scene.image.ImageView} object
 	*/
-	public static ImageView createGridImage(Image image)
+	public static ImageView createGridImage(Image image, int size)
 	{
 		ImageView imageView = new ImageView();
 		imageView.setImage(image);
 		imageView.setX(0);
 		imageView.setY(0);
-		imageView.setFitHeight(50);
-		imageView.setFitWidth(50);
+		imageView.setFitHeight(size);
+		imageView.setFitWidth(size);
 		imageView.setPreserveRatio(true);
 		return imageView;
 	}

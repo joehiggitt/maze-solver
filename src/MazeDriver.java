@@ -18,12 +18,12 @@ public class MazeDriver
 		// System.out.println("File Found: " + file.exists());
 
 
-		// Maze maze = null;
+		Maze maze = null;
 		// String maze1 = "e.###############\n#....####.....###\n#.##......###.##.\n#.####.##.###....\n#.####.##..#####.\n#..###.###.......\n##.###..#####.###\n##..###...###.###\n..#####.#..##.##x\n.#####..##....##.\n...#.............\n##...######..####";
 
 		try
 		{
-			maze = Maze.fromTxt("/home/csimage/GitRepos/comp16412/comp16412-coursework-2_w81310jh/resources/mazes/maze3.txt");
+			maze = Maze.fromTxt("/home/csimage/Downloads/Test.txt");
 		}
 		catch (InvalidMazeException e)
 		{
@@ -61,7 +61,7 @@ public class MazeDriver
 			}
 			catch (NoRouteFoundException e)
 			{
-				System.out.println("An error occured.");
+				System.out.println("No route found.");
 				e.printStackTrace();
 				break;
 			}

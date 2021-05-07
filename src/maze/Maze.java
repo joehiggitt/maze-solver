@@ -98,15 +98,12 @@ public class Maze implements Serializable
 				Tile tile = tileList.get(i).get(j);
 				if (tile.getType() == Tile.Type.ENTRANCE)
 				{
-					if ((i == 0) || (j == 0) || (i == tileList.size() - 1) || (j == tileList.get(0).size() - 1))
+					try
 					{
 						maze.setEntrance(tile);
-						break;
 					}
-					else
-					{
-						throw new InvalidMazeException("Entrance must be at the edge of maze.");
-					}
+					catch (IllegalArgumentException e) {}
+					break;
 				}
 			}
 			if (maze.getEntrance() != null)
@@ -121,15 +118,12 @@ public class Maze implements Serializable
 				Tile tile = tileList.get(i).get(j);
 				if (tile.getType() == Tile.Type.EXIT)
 				{
-					if ((i == 0) || (j == 0) || (i == tileList.size() - 1) || (j == tileList.get(0).size() - 1))
+					try
 					{
 						maze.setExit(tile);
-						break;
 					}
-					else
-					{
-						throw new InvalidMazeException("Exit must be at the edge of maze.");
-					}
+					catch (IllegalArgumentException e) {}
+					break;
 				}
 			}
 			if (maze.getExit() != null)
@@ -224,7 +218,7 @@ public class Maze implements Serializable
 	*/
 	public Tile getAdjacentTile(Tile tile, Direction dir)
 	{
-		Coordinate coord = getTileAtLocation(tile);
+		Coordinate coord = getTileLocation(tile);
 		int x = coord.getX();
 		int y = coord.getY();
 		switch (dir)
@@ -303,7 +297,7 @@ public class Maze implements Serializable
 	* @param tile the tile whose coordinates are wanted
 	* @return Returns a {@link maze.Maze.Coordinate} object
 	*/
-	public Coordinate getTileAtLocation(Tile tile)
+	public Coordinate getTileLocation(Tile tile)
 	{
 		for (int x = 0; x < tiles.size(); x++)
 		{
@@ -328,36 +322,51 @@ public class Maze implements Serializable
 		return tiles;
 	}
 
-	private void setEntrance(Tile newEntrance) throws InvalidMazeException
+	private void setEntrance(Tile newEntrance) throws InvalidMazeException, IllegalArgumentException
 	{
 		if (newEntrance.getType() != Tile.Type.ENTRANCE)
 		{
-			throw new InvalidMazeException("Tile of type " + newEntrance.getType() + " tried to become entrance");
+			throw new IllegalArgumentException("Tile of type " + newEntrance.getType() + " tried to become entrance");
 		}
-		else if (getTileAtLocation(newEntrance) == null)
+		Coordinate coord = getTileLocation(newEntrance);
+		if (coord == null)
 		{
-			throw new InvalidMazeException("Tile not in maze");
+			throw new IllegalArgumentException("Tile not in maze");
 		}
-		else if (entrance != null)
+		int i = coord.getX();
+		int j = coord.getY();
+		if ((i != 0) && (j != 0) && (i != tiles.size() - 1) && (j != tiles.get(0).size() - 1))
+		{
+			throw new InvalidMazeException("Entrance must be at the edge of maze.");
+		}
+		if (entrance != null)
 		{
 			throw new MultipleEntranceException();
 		}
 		entrance = newEntrance;
+
 	}
 
-	private void setExit(Tile newExit) throws InvalidMazeException
+	private void setExit(Tile newExit) throws InvalidMazeException, IllegalArgumentException
 	{
+		if (newExit.getType() != Tile.Type.EXIT)
+		{
+			throw new IllegalArgumentException("Tile of type " + newExit.getType() + " tried to become exit");
+		}
+		Coordinate coord = getTileLocation(newExit);
+		if (coord == null)
+		{
+			throw new IllegalArgumentException("Tile not in maze");
+		}
+		int i = coord.getX();
+		int j = coord.getY();
+		if ((i != 0) && (j != 0) && (i != tiles.size() - 1) && (j == tiles.get(0).size() - 1))
+		{
+			throw new InvalidMazeException("Entrance must be at the edge of maze.");
+		}
 		if (exit != null)
 		{
 			throw new MultipleExitException();
-		}
-		else if (newExit.getType() != Tile.Type.EXIT)
-		{
-			throw new InvalidMazeException("Tile of type " + newExit.getType() + " tried to become exit");
-		}
-		else if (getTileAtLocation(newExit) == null)
-		{
-			throw new InvalidMazeException("Tile not in maze");
 		}
 		exit = newExit;
 	}
@@ -453,14 +462,14 @@ public class Maze implements Serializable
 		{
 			return 0;
 		}
-		int tileX = getTileAtLocation(tile).getX();
-		int tileY = getTileAtLocation(tile).getY();
-		int exitX = getTileAtLocation(exit).getX();
-		int exitY = getTileAtLocation(exit).getY();
-		return Math.abs(exitX - tileX) + Math.abs(exitY - tileY);
-		// int xSquared = (int) Math.pow(exitX - tileX, 2);
-		// int ySquared = (int) Math.pow(exitY - tileY, 2);
-		// return (int) Math.round(Math.sqrt(xSquared + ySquared));
+		int tileX = getTileLocation(tile).getX();
+		int tileY = getTileLocation(tile).getY();
+		int exitX = getTileLocation(exit).getX();
+		int exitY = getTileLocation(exit).getY();
+		// return Math.abs(exitX - tileX) + Math.abs(exitY - tileY);
+		int xSquared = (int) Math.pow(exitX - tileX, 2);
+		int ySquared = (int) Math.pow(exitY - tileY, 2);
+		return (int) Math.round(Math.sqrt(xSquared + ySquared));
 	}
 
 
