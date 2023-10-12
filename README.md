@@ -1,25 +1,32 @@
-# Where do I put my files?
+# Maze Solver
 
-You should store all of your Java source files in the `src` directory, or subdirectories within the `src` directory.
+A Java project that can solve a maze using the A* path finding algorithm. The user can upload a `.txt` representation of the maze (see the files in `resources/mazes/` for examples of this), which are displayed graphically. The user can then step through the solution to the maze. The solution for the maze can be saved for later use.
 
-You should store any graphics files (e.g. `.jpg`) or other non source-code resources in the `resources` directory, or subdirectories within the `src` directory.
+## Usage
 
-# How do I compile/run my code
+To compile and run the project, use the following commands:
 
-For convenience we've supplied some execution scripts that will compile/run code with the `--add-modules` flag set (for Java FX). Use `javac.sh` to compile on Linux and Mac OS, or `javac.bat` to compile on Windows. Likewise, use `java.sh` to run on Linux and Mac OS, or `java.bat` to run on Windows. E.g.
+- Linux or MacOS
+    ```
+    $ ./javac.sh src/MazeApplication.java  
+    $ ./java.sh MazeApplication
+    ```
 
-```
-$ cd comp16412-coursework-1_username
-$ ./javac.sh src/MazeApplication.java  
-$ ./java.sh MazeApplication
-```
+- Windows
+    ```
+    > ./javac.bat src/MazeApplication.java  
+    > ./java.bat MazeApplication
+    ```
 
-Note that in the above example, on line 3, the name of the class file to run (`MazeApplication`) is **NOT** prefixed with the source path.
+### Running Tests
 
-# How do I compile/run the tests?
+The following shell files can be used to run the tests:
 
-We've supplied a shell file, `run_tests.sh`, that should work on Linux/Mac OS.
-
-The file `run_tests.bat` should do the same thing on Windows. This file is purely for your convenience and (a) won't be used in marking, (b) isn't something we're going to provide lots of support for!
-
-
+- Linux or MacOS
+    ```
+    $ ./run_tests.sh
+    ```
+- Windows
+    ```
+    > ./run_tests.bat
+    ```
